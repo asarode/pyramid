@@ -1,6 +1,10 @@
 extern crate clap;
+extern crate image;
+
+use std::path::Path;
 
 use clap::{Arg, App};
+use image::GenericImage;
 
 fn main() {
     let matches = App::new("Pyramid")
@@ -17,5 +21,8 @@ fn main() {
         .get_matches();
 
     let input_file = matches.value_of("input").unwrap();
-    println!("Input file: {}", input_file);
+    let im = image::open(&Path::new(&input_file)).unwrap();
+
+    println!("dimensions: {:?}", im.dimensions());
+    println!("color type: {:?}", im.color());
 }

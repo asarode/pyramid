@@ -5,3 +5,4 @@ authors = ["Arjun Sarode <sarodearjun57@gmail.com>"]
 
 [dependencies]
 clap = "~2.19.0"
+image = "0.14.0"
