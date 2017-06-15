@@ -31,10 +31,11 @@ pub fn write_image_tile(input_location: &str, output_location: &str, image_to_wr
     let image_name = input_path.file_stem().unwrap().to_str().unwrap();
     let extension = input_path.extension().unwrap();
     let width = image_to_write.width();
-    let file_name = format!("{}-{}x{}", image_name, width, width);
+    let file_name = &*format!("{}-{}x{}", image_name, width, width);
     let out_path = Path::new(output_location).join(file_name).with_extension(extension);
-    let ref mut fout = File::create(&out_path).unwrap();
-    let _ = image_to_write.save(fout, image::JPEG).unwrap();
+    let ref mut fout = File::create(&out_path)
+        .expect(&format!("Failed to create the file {} in directory {}", file_name, output_location));
+    let _ = image_to_write.save(fout, image::JPEG).expect(&format!("Failed to save image to {}", out_path.to_str().unwrap()));
 
     ()
 }
