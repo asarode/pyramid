@@ -3,6 +3,10 @@ name = "pyramid"
 version = "0.1.0"
 authors = ["Arjun Sarode <sarodearjun57@gmail.com>"]
 
+[[bin]]
+name = "pyramid"
+doc = false
+
 [dependencies]
 clap = "~2.19.0"
 image = "0.14.0"

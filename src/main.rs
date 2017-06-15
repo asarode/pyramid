@@ -1,11 +1,13 @@
 extern crate clap;
 extern crate image;
+extern crate pyramid;
 
 use std::fs::{DirBuilder, File};
 use std::path::Path;
 
 use clap::{Arg, App};
 use image::{GenericImage, FilterType};
+use pyramid::{get_image_from_location};
 
 fn main() {
     let matches = App::new("Pyramid")
@@ -29,12 +31,13 @@ fn main() {
 
     let input_location = matches.value_of("input").unwrap();
     let output_location = matches.value_of("output").unwrap_or("./mwahaha");
+    let initial_image = get_image_from_location(input_location);
     let input_path = Path::new(&input_location);
     let image_name = input_path.file_stem().unwrap().to_str().unwrap();
     let extension = input_path.extension().unwrap();
-    let inital_image = image::open(&input_path).unwrap();
+    // let initial_image = image::open(&input_path).unwrap();
 
-    let mut pyramid = vec![inital_image];
+    let mut pyramid = vec![initial_image];
     let levels = 3;
     for level in 1..levels {
         let down_sampled_image = {
