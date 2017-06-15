@@ -34,11 +34,15 @@ fn main() {
     let levels = 3;
     let pyramid = build_pyramid(levels, initial_image);
 
-    DirBuilder::new()
+    let out_dir = DirBuilder::new()
         .recursive(true)
-        .create(output_location)
-        .unwrap();
+        .create(output_location);
+    match out_dir {
+        Ok(_) => (),
+        Err(error) => panic!("There was a problem using the output directory {}: {:?}", output_location, error),
+    }
 
+    println!("Outputting images to: {}", output_location);
     for image in &pyramid {
         write_image_tile(input_location, output_location, image);
     }
