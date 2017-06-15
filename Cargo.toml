@@ -1,6 +1,6 @@
 [package]
 name = "pyramid_grok"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Arjun Sarode <sarodearjun57@gmail.com>"]
 description = "Testing out some Rust for making image pyramids."
 license = "MIT"
