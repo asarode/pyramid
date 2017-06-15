@@ -2,12 +2,10 @@ extern crate clap;
 extern crate image;
 extern crate pyramid;
 
-use std::fs::{DirBuilder, File};
-use std::path::Path;
+use std::fs::DirBuilder;
 
 use clap::{Arg, App};
-use image::{GenericImage, FilterType};
-use pyramid::{get_image_from_location};
+use pyramid::{build_pyramid, get_image_from_location, write_image_tile};
 
 fn main() {
     let matches = App::new("Pyramid")
@@ -32,23 +30,9 @@ fn main() {
     let input_location = matches.value_of("input").unwrap();
     let output_location = matches.value_of("output").unwrap_or("./mwahaha");
     let initial_image = get_image_from_location(input_location);
-    let input_path = Path::new(&input_location);
-    let image_name = input_path.file_stem().unwrap().to_str().unwrap();
-    let extension = input_path.extension().unwrap();
-    // let initial_image = image::open(&input_path).unwrap();
 
-    let mut pyramid = vec![initial_image];
     let levels = 3;
-    for level in 1..levels {
-        let down_sampled_image = {
-            let ref higher_res_image = pyramid[level - 1];
-            let (width, height) = higher_res_image.dimensions();
-
-            higher_res_image.resize(width / 4, height / 4, FilterType::Gaussian)
-        };
-
-        pyramid.push(down_sampled_image);
-    }
+    let pyramid = build_pyramid(levels, initial_image);
 
     DirBuilder::new()
         .recursive(true)
@@ -56,10 +40,6 @@ fn main() {
         .unwrap();
 
     for image in &pyramid {
-        let width = image.width();
-        let file_name = format!("{}-{}x{}", image_name, width, width);
-        let out_path = Path::new(output_location).join(file_name).with_extension(extension);
-        let ref mut fout = File::create(&out_path).unwrap();
-        let _ = image.save(fout, image::JPEG).unwrap();
+        write_image_tile(input_location, output_location, image);
     }
 }
