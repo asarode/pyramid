@@ -1,7 +1,6 @@
 extern crate clap;
 extern crate image;
 
-use std::fs::File;
 use std::path::Path;
 
 use clap::{Arg, App};
@@ -21,10 +20,23 @@ fn main() {
             .required(true))
         .get_matches();
 
-    let input_file = matches.value_of("input").unwrap();
-    let im = image::open(&Path::new(&input_file)).unwrap();
-    let (width, height) = im.dimensions();
-    let down_sampled = im.resize(width / 4, height / 4, FilterType::Gaussian);
-    let ref mut fout = File::create(&Path::new("down-sampled.jpg")).unwrap();
-    let _ = down_sampled.save(fout, image::PNG).unwrap();
+    let levels = 3;
+    let input_path = matches.value_of("input").unwrap();
+
+    let res_0 = image::open(&Path::new(&input_path)).unwrap();
+    let mut pyramid = vec![res_0];
+    for level in 1..levels {
+        let down_sampled_image = {
+            let ref higher_res_image = pyramid[level - 1];
+            let (width, height) = higher_res_image.dimensions();
+
+            higher_res_image.resize(width / 4, height / 4, FilterType::Gaussian)
+        };
+
+        pyramid.push(down_sampled_image);
+    }
+
+    for image in &pyramid {
+        println!("dimensions: {:?}", image.dimensions());
+    }
 }
