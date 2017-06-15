@@ -1,11 +1,11 @@
 extern crate clap;
 extern crate image;
-extern crate pyramid;
+extern crate pyramid_grok;
 
 use std::fs::DirBuilder;
 
 use clap::{Arg, App};
-use pyramid::{build_pyramid, get_image_from_location, write_image_tile};
+use pyramid_grok::{build_pyramid, get_image_from_location, write_image_tile};
 
 fn main() {
     let matches = App::new("Pyramid")
