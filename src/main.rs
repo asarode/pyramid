@@ -1,6 +1,7 @@
 extern crate clap;
 extern crate image;
 
+use std::fs::{DirBuilder, File};
 use std::path::Path;
 
 use clap::{Arg, App};
@@ -36,7 +37,17 @@ fn main() {
         pyramid.push(down_sampled_image);
     }
 
+    let pyramid_path = "./mwahaha";
+    DirBuilder::new()
+        .recursive(true)
+        .create(pyramid_path)
+        .unwrap();
+
     for image in &pyramid {
-        println!("dimensions: {:?}", image.dimensions());
+        let width = image.width();
+        let file_name = format!("image-{}x{}", width, width);
+        let out_path = Path::new(pyramid_path).join(file_name);
+        let ref mut fout = File::create(&out_path).unwrap();
+        let _ = image.save(fout, image::PNG).unwrap();
     }
 }
